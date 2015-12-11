@@ -1,4 +1,4 @@
-FROM ubuntu:15.04
+FROM ubuntu:15.10
 MAINTAINER John Oram <john@oram.ca>
 
 RUN locale-gen --no-purge en_US.UTF-8
@@ -12,6 +12,7 @@ RUN apt-get -y update
 RUN apt-get -y upgrade
 ADD requirements_apt.txt /requirements_apt.txt
 RUN cat /requirements_apt.txt | xargs apt-get install -y
+RUN apt-cache search postgres
 
 #########
 # create user/password/db:
