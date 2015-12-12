@@ -23,6 +23,6 @@ RUN apt-cache search postgres
 USER postgres
 RUN service postgresql start && psql --command "CREATE USER tp_user WITH SUPERUSER PASSWORD 'tp_password';" && createdb -O tp_user tp_database
 
-EXPOSE 6543
-CMD service postgresql start
-
+EXPOSE 5432
+#CMD ["service", "postgresql", "start"]
+CMD ["/usr/lib/postgresql/9.4/bin/postgres", "-D", "/var/lib/postgresql/9.4/main", "-c", "config_file=/etc/postgresql/9.4/main/postgresql.conf"]
