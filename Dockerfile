@@ -12,7 +12,6 @@ RUN apt-get -y update
 RUN apt-get -y upgrade
 ADD requirements_apt.txt /requirements_apt.txt
 RUN cat /requirements_apt.txt | xargs apt-get install -y
-RUN apt-cache search postgres
 
 #########
 # create user/password/db:
@@ -22,7 +21,10 @@ RUN apt-cache search postgres
 #########
 USER postgres
 RUN service postgresql start && psql --command "CREATE USER tp_user WITH SUPERUSER PASSWORD 'tp_password';" && createdb -O tp_user tp_database
+RUN touch /var/log/postgresql/error.log
 
+USER root
 EXPOSE 5432
-#CMD ["service", "postgresql", "start"]
-CMD ["/usr/lib/postgresql/9.4/bin/postgres", "-D", "/var/lib/postgresql/9.4/main", "-c", "config_file=/etc/postgresql/9.4/main/postgresql.conf"]
+COPY ./postgresql.conf /etc/postgresql/9.4/main/postgresql.conf
+COPY ./pg_hba.conf /etc/postgresql/9.4/main/pg_hba.conf
+CMD service postgresql start && tail -F /var/log/postgresql/error.log
